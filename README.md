@@ -1,5 +1,7 @@
 # Hyperapp Router
 
+[![npm (scoped)](https://img.shields.io/npm/v/@mrbarrysoftware/hyperapp-router?style=flat-square)](https://www.npmjs.com/package/@mrbarrysoftware/hyperapp-router)
+
 > **Warning**
 This is a beta release, and the API will be completely unstable.
 Expect any change to be breaking until a proper API is ironed out.
