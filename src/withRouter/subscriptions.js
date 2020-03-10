@@ -13,7 +13,7 @@ export const navigateByURI = (href) => {
 const PushFX = (dispatch, props) => {
   let currentRoute = {};
 
-  const onPush = (route, match) => {
+  const setCurrentRoute = (route, match) => {
     if (currentRoute.OnLeave) {
       dispatch(currentRoute.OnLeave(currentRoute.params));
     }
@@ -33,6 +33,10 @@ const PushFX = (dispatch, props) => {
     if (currentRoute.OnEnter) {
       dispatch(currentRoute.OnEnter(currentRoute.params));
     }
+  };
+
+  const onPush = (route, match) => {
+    setCurrentRoute(route, match);
 
     window.history.pushState({}, '', match.path);
   };
@@ -66,6 +70,12 @@ const PushFX = (dispatch, props) => {
   };
   document.addEventListener(ROUTER_EVENT, onNavigate);
 
+  const onPop = (event) => {
+    const result = findRouteAndMatch(event.originalTarget.location.pathname);
+    return setCurrentRoute(result.route, result.match);
+  };
+  window.addEventListener('popstate', onPop);
+
   const init = () => {
     const result = findRouteAndMatch(window.location.pathname);
     return onPush(result.route, result.match);
@@ -76,6 +86,7 @@ const PushFX = (dispatch, props) => {
   return () => {
     document.removeEventListener('click', onClick);
     document.removeEventListener(ROUTER_EVENT, onNavigate);
+    window.removeEventListener('popstate', onPop);
   };
 };
 export const Push = (props) => [PushFX, props];
