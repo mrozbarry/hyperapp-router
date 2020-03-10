@@ -29,6 +29,7 @@ export default (app) => ({ router, ...rest }) => {
       ...originalSubscriptions(state),
       subscriptions.Push({
         routes,
+        RouteAction: router.RouteAction,
       }),
     ],
   });

@@ -2,9 +2,7 @@ const ROUTER_EVENT = 'hyperapp-router-navigate';
 
 export const navigateByURI = (href) => {
   const event = new CustomEvent(ROUTER_EVENT, {
-    detail: {
-      href,
-    },
+    detail: { href },
   });
 
   document.dispatchEvent(event);
