@@ -10,8 +10,22 @@ export const navigateByURI = (href) => {
   document.dispatchEvent(event);
 };
 
+const makeFindRouteAndMatch = (routes) => (href) => {
+  let route;
+  for (route of routes) {
+    const match = route.match(href);
+    if (!match) continue;
+
+    return { route, match };
+  }
+
+  return null;
+};
+
 const PushFX = (dispatch, props) => {
   let currentRoute = {};
+
+  const findRouteAndMatch = makeFindRouteAndMatch(props.routes);
 
   const setCurrentRoute = (route, match) => {
     if (currentRoute.OnLeave) {
@@ -37,20 +51,7 @@ const PushFX = (dispatch, props) => {
 
   const onPush = (route, match) => {
     setCurrentRoute(route, match);
-
     window.history.pushState({}, '', match.path);
-  };
-
-  const findRouteAndMatch = (href) => {
-    let route;
-    for (route of props.routes) {
-      const match = route.match(href);
-      if (!match) continue;
-
-      return { route, match };
-    }
-
-    return null;
   };
 
   const onClick = (event) => {
@@ -77,8 +78,7 @@ const PushFX = (dispatch, props) => {
   window.addEventListener('popstate', onPop);
 
   const init = () => {
-    const result = findRouteAndMatch(window.location.pathname);
-    return onPush(result.route, result.match);
+    return onPop({ originalTarget: window });
   };
 
   setTimeout(init, 0);
