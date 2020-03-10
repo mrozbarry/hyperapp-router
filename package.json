@@ -1,0 +1,27 @@
+{
+  "name": "@mrbarrysoftware/hyperapp-router",
+  "version": "0.0.1",
+  "description": "A router for Hyperapp",
+  "main": "index.js",
+  "repository": "git+https://github.com/mrozbarry/hyperapp-router",
+  "author": "Alex Barry",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "start:testApp": "parcel ./src/index.html"
+  },
+  "devDependencies": {
+    "ava": "^3.5.0",
+    "eslint": "^6.8.0",
+    "eslint-plugin-import": "^2.20.1",
+    "esm": "^3.2.25",
+    "parcel-bundler": "^1.12.4",
+    "rollup": "^2.0.2"
+  },
+  "peerDependencies": {
+    "hyperapp": "^2.0"
+  },
+  "dependencies": {
+    "path-to-regexp": "^6.1.0"
+  }
+}
