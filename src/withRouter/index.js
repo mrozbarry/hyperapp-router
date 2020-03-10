@@ -1,18 +1,20 @@
 import { match } from 'path-to-regexp';
-import * as subscriptions from './push.subscription.js';
 
-const routesToArray = (routesObject) => Object.keys(routesObject).reduce((routes, path) => {
-  const route = {
-    ...routesObject[path],
-    path,
-    match: match(path),
-  }
+import * as subscriptions from './subscriptions';
 
-  return [
-    ...routes,
-    route,
-  ];
-}, []);
+const routesToArray = (routesObject) => Object.keys(routesObject)
+  .reduce((routes, path) => {
+    const route = {
+      ...routesObject[path],
+      path,
+      match: match(path),
+    }
+
+    return [
+      ...routes,
+      route,
+    ];
+  }, []);
 
 export default (app) => ({ router, ...rest }) => {
   const originalSubscriptions = rest.subscriptions

@@ -15,13 +15,15 @@ const PushFX = (dispatch, props) => {
 
   const onPush = (route, match) => {
     if (currentRoute.OnLeave) {
-      dispatch(currentRoute.OnLeave, currentRoute.params);
+      dispatch(currentRoute.OnLeave(currentRoute.params));
     }
 
-    dispatch(props.RouteAction, {
-      params: match.params,
-      path: match.path,
-    });
+    if (props.RouteAction) {
+      dispatch(props.RouteAction({
+        params: match.params,
+        path: match.path,
+      }));
+    }
 
     currentRoute = {
       ...route,
@@ -29,7 +31,7 @@ const PushFX = (dispatch, props) => {
     };
 
     if (currentRoute.OnEnter) {
-      dispatch(currentRoute.OnEnter, currentRoute.params);
+      dispatch(currentRoute.OnEnter(currentRoute.params));
     }
 
     window.history.pushState({}, '', match.path);
