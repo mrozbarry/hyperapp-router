@@ -1,6 +1,6 @@
 {
   "name": "@mrbarrysoftware/hyperapp-router",
-  "version": "0.0.1-beta.2",
+  "version": "0.0.1-beta.3",
   "description": "A router for Hyperapp",
   "main": "index.js",
   "repository": "git+https://github.com/mrozbarry/hyperapp-router",
