@@ -69,14 +69,14 @@ const PushFX = (dispatch, props) => {
   };
   document.addEventListener(ROUTER_EVENT, onNavigate);
 
-  const onPop = (event) => {
-    const result = findRouteAndMatch(event.originalTarget.location.pathname);
-    return setCurrentRoute(result.route, result.match);
+  const onPop = () => {
+    const result = findRouteAndMatch(window.location.pathname);
+    if (result) setCurrentRoute(result.route, result.match);
   };
   window.addEventListener('popstate', onPop);
 
   const init = () => {
-    return onPop({ originalTarget: window });
+    return onPop();
   };
 
   setTimeout(init, 0);
