@@ -3,6 +3,7 @@
   "version": "0.0.1-beta.3",
   "description": "A router for Hyperapp",
   "main": "index.js",
+  "module": "src/index.js",
   "repository": "git+https://github.com/mrozbarry/hyperapp-router",
   "author": "Alex Barry",
   "license": "MIT",
