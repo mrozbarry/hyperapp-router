@@ -20,9 +20,9 @@ yarn add @mrbarrysoftware/hyperapp-router
 import { app, h } from 'hyperapp';
 import withRouter, { effects } from '@mrbarrysoftware/hyperapp-router';
 
-const SomeAction = state => [
+const RouteAction = (state, { href }) => [
   state,
-  effects.NavigateByURI({ href: '/some/routable/uri/here' }),
+  effects.NavigateByURI({ href }), // where href is a string, like `/route/path/here`
 ];
 
 withRouter(app)({

@@ -1,4 +1,4 @@
-import withRouter from './withRouter/index.js';
+import withRouter from './index.js';
 
 const { app, h } = window.hyperapp;
 
