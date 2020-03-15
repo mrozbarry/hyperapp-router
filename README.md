@@ -20,7 +20,7 @@ yarn add @mrbarrysoftware/hyperapp-router
 import { app, h } from 'hyperapp';
 import withRouter, { effects } from '@mrbarrysoftware/hyperapp-router';
 
-const RouteAction = (state, { href }) => [
+const GoToHref = (state, { href }) => [
   state,
   effects.Navigate({ href }), // where href is a string, like `/route/path/here`
 ];
@@ -47,12 +47,12 @@ withRouter(app)({
     routes: {
       '/': {
         // Optional Action to run when entering this route
-        OnEnter: (params) => (state) => ({
+        OnEnter: (state, params) => ({
           ...state,
         }),
 
         // Optional Action to run when leaving this route
-        OnLeave: (params) => (state) => ({
+        OnLeave: (state, params) => ({
           ...state,
         }),
       },
