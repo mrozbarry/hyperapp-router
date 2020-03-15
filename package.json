@@ -1,6 +1,6 @@
 {
   "name": "@mrbarrysoftware/hyperapp-router",
-  "version": "0.0.1-beta.3",
+  "version": "0.0.1-beta.4",
   "description": "A router for Hyperapp",
   "main": "index.js",
   "module": "src/index.js",
