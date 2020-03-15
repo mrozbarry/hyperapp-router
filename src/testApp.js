@@ -1,4 +1,4 @@
-import withRouter from './withRouter/index.js';
+import withRouter from './index.js';
 
 const { app, h } = window.hyperapp;
 
@@ -39,15 +39,15 @@ withRouter(app)({
   router: {
     routes: {
       '/': {
-        OnEnter: () => state => ({
+        OnEnter: state => ({
           ...state,
           viewFn: () => h('div', null, 'Root'),
         }),
       },
       '/todos/:id': {
-        OnEnter: (params) => (appState) => [
+        OnEnter: (state, params) => [
           {
-            ...appState,
+            ...state,
             viewFn: viewTodo(params.id),
           },
           Api({
@@ -59,8 +59,8 @@ withRouter(app)({
         ],
       },
       '/(.*)': {
-        OnEnter: () => (appState) => ({
-          ...appState,
+        OnEnter: (state) => ({
+          ...state,
             viewFn: () => h('div', null, [
               h('h1', null, '404: Page not found'),
             ]),

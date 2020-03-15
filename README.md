@@ -18,23 +18,41 @@ yarn add @mrbarrysoftware/hyperapp-router
 
 ```js
 import { app, h } from 'hyperapp';
-import withRouter from '@mrbarrysoftware/hyperapp-router';
+import withRouter, { effects } from '@mrbarrysoftware/hyperapp-router';
+
+const GoToHref = (state, { href }) => [
+  state,
+  effects.Navigate({ href }), // where href is a string, like `/route/path/here`
+];
 
 withRouter(app)({
   router: {
     // Optional action ran every push/pop state
+    // Useful when you just need navigation to
+    // set something in state
     RouteAction: (state, { params, path }) => ({
       ...state,
     }),
+
+    // Optional boolean
+    // Prevents the router from capturing every
+    // click on an anchor and attempting to route
+    // it. Removing this means you will need to
+    // add custom actions and effects to allow
+    // navigation with the router.
+    // If not set, the default is false, and that's
+    // probably what you want.
+    disableAnchorCapture: false,
     
     routes: {
       '/': {
         // Optional Action to run when entering this route
-        OnEnter: (params) => (state) => ({
+        OnEnter: (state, params) => ({
           ...state,
         }),
 
-        OnLeave: (params) => (state) => ({
+        // Optional Action to run when leaving this route
+        OnLeave: (state, params) => ({
           ...state,
         }),
       },

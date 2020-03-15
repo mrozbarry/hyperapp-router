@@ -1,12 +1,5 @@
-const ROUTER_EVENT = 'hyperapp-router-navigate';
-
-export const navigateByURI = (href) => {
-  const event = new CustomEvent(ROUTER_EVENT, {
-    detail: { href },
-  });
-
-  document.dispatchEvent(event);
-};
+import * as constants from './const';
+import { navigate } from './lib/navigate';
 
 const makeFindRouteAndMatch = (routes) => (href) => {
   let route;
@@ -26,15 +19,16 @@ const PushFX = (dispatch, props) => {
   const findRouteAndMatch = makeFindRouteAndMatch(props.routes);
 
   const setCurrentRoute = (route, match) => {
+    console.log('setCurrentRoute', { route, match });
     if (currentRoute.OnLeave) {
-      dispatch(currentRoute.OnLeave(currentRoute.params));
+      dispatch(currentRoute.OnLeave, currentRoute.params);
     }
 
     if (props.RouteAction) {
-      dispatch(props.RouteAction({
+      dispatch(props.RouteAction, {
         params: match.params,
         path: match.path,
-      }));
+      });
     }
 
     currentRoute = {
@@ -43,7 +37,7 @@ const PushFX = (dispatch, props) => {
     };
 
     if (currentRoute.OnEnter) {
-      dispatch(currentRoute.OnEnter(currentRoute.params));
+      dispatch(currentRoute.OnEnter, currentRoute.params);
     }
   };
 
@@ -52,39 +46,63 @@ const PushFX = (dispatch, props) => {
     window.history.pushState({}, '', match.path);
   };
 
-  const onClick = (event) => {
-    if (!event.target.matches('a')) return null;
-
-    const result = findRouteAndMatch(event.target.getAttribute('href'));
-    if (!result) return null;
-
-    event.preventDefault();
-    return onPush(result.route, result.match);
+  const onReplace = (route, match) => {
+    setCurrentRoute(route, match);
+    window.history.replaceState({}, '', match.path);
   };
-  document.addEventListener('click', onClick);
+
+  const getNavigateMethod = (type) => {
+    switch (type) {
+    case 'replace':
+      return onReplace;
+
+    default:
+      return onPush;
+    }
+  }
 
   const onNavigate = (event) => {
+    const method = getNavigateMethod(event.detail.type);
     const result = findRouteAndMatch(event.detail.href);
-    return onPush(result.route, result.match);
+    return method(result.route, result.match);
   };
-  document.addEventListener(ROUTER_EVENT, onNavigate);
+  document.addEventListener(constants.ROUTER_EVENT, onNavigate);
 
-  const onPop = () => {
-    const result = findRouteAndMatch(window.location.pathname);
-    if (result) setCurrentRoute(result.route, result.match);
+  const onPop = (event) => {
+    const result = findRouteAndMatch(event.originalTarget.location.pathname);
+    return setCurrentRoute(result.route, result.match);
   };
   window.addEventListener('popstate', onPop);
 
   const init = () => {
-    return onPop();
+    return onPop({ originalTarget: window });
   };
 
   setTimeout(init, 0);
 
   return () => {
-    document.removeEventListener('click', onClick);
-    document.removeEventListener(ROUTER_EVENT, onNavigate);
+    document.removeEventListener(constants.ROUTER_EVENT, onNavigate);
     window.removeEventListener('popstate', onPop);
   };
 };
 export const Push = (props) => [PushFX, props];
+
+const AnchorFX = (_dispatch, props) => {
+  const findRouteAndMatch = makeFindRouteAndMatch(props.routes);
+
+  const onClick = (event) => {
+    if (!event.target.matches('a')) return null;
+
+    const href = event.target.getAttribute('href');
+    if (!findRouteAndMatch(href)) return null;
+
+    event.preventDefault();
+    return navigate(href, { type: 'push' });
+  };
+  document.addEventListener('click', onClick);
+
+  return () => {
+    document.removeEventListener('click', onClick);
+  };
+};
+export const Anchor = props => [AnchorFX, props];

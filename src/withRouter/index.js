@@ -31,6 +31,9 @@ export default (app) => ({ router, ...rest }) => {
         routes,
         RouteAction: router.RouteAction,
       }),
+      !router.disableAnchorCapture && subscriptions.Anchor({
+        routes,
+      }),
     ],
   });
 };
