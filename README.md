@@ -23,9 +23,21 @@ import withRouter from '@mrbarrysoftware/hyperapp-router';
 withRouter(app)({
   router: {
     // Optional action ran every push/pop state
+    // Useful when you just need navigation to
+    // set something in state
     RouteAction: (state, { params, path }) => ({
       ...state,
     }),
+
+    // Optional boolean
+    // Prevents the router from capturing every
+    // click on an anchor and attempting to route
+    // it. Removing this means you will need to
+    // add custom actions and effects to allow
+    // navigation with the router.
+    // If not set, the default is false, and that's
+    // probably what you want.
+    disableAnchorCapture: false,
     
     routes: {
       '/': {
@@ -34,6 +46,7 @@ withRouter(app)({
           ...state,
         }),
 
+        // Optional Action to run when leaving this route
         OnLeave: (params) => (state) => ({
           ...state,
         }),

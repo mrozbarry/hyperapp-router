@@ -1,8 +1,11 @@
 import * as constants from '../const';
 
-export const navigateByURI = (href) => {
+export const navigateByURI = (href, options = { type: 'push' }) => {
   const event = new CustomEvent(constants.ROUTER_EVENT, {
-    detail: { href },
+    detail: {
+      ...options,
+      href,
+    },
   });
 
   document.dispatchEvent(event);

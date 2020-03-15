@@ -1,4 +1,5 @@
 import * as constants from './const';
+import { navigateByURI } from './lib/navigateByURI';
 
 const makeFindRouteAndMatch = (routes) => (href) => {
   let route;
@@ -44,20 +45,25 @@ const PushFX = (dispatch, props) => {
     window.history.pushState({}, '', match.path);
   };
 
-  const onClick = (event) => {
-    if (!event.target.matches('a')) return null;
-
-    const result = findRouteAndMatch(event.target.getAttribute('href'));
-    if (!result) return null;
-
-    event.preventDefault();
-    return onPush(result.route, result.match);
+  const onReplace = (route, match) => {
+    setCurrentRoute(route, match);
+    window.history.replaceState({}, '', match.path);
   };
-  document.addEventListener('click', onClick);
+
+  const getNavigateMethod = (type) => {
+    switch (type) {
+    case 'replace':
+      return onReplace;
+
+    default:
+      return onPush;
+    }
+  }
 
   const onNavigate = (event) => {
+    const method = getNavigateMethod(event.detail.type);
     const result = findRouteAndMatch(event.detail.href);
-    return onPush(result.route, result.match);
+    return method(result.route, result.match);
   };
   document.addEventListener(constants.ROUTER_EVENT, onNavigate);
 
@@ -74,9 +80,28 @@ const PushFX = (dispatch, props) => {
   setTimeout(init, 0);
 
   return () => {
-    document.removeEventListener('click', onClick);
     document.removeEventListener(constants.ROUTER_EVENT, onNavigate);
     window.removeEventListener('popstate', onPop);
   };
 };
 export const Push = (props) => [PushFX, props];
+
+const AnchorFX = (_dispatch, props) => {
+  const findRouteAndMatch = makeFindRouteAndMatch(props.routes);
+
+  const onClick = (event) => {
+    if (!event.target.matches('a')) return null;
+
+    const href = event.target.getAttribute('href');
+    if (!findRouteAndMatch(href)) return null;
+
+    event.preventDefault();
+    return navigateByURI(href, { type: 'push' });
+  };
+  document.addEventListener('click', onClick);
+
+  return () => {
+    document.removeEventListener('click', onClick);
+  };
+};
+export const Anchor = props => [AnchorFX, props];
