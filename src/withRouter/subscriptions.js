@@ -19,15 +19,16 @@ const PushFX = (dispatch, props) => {
   const findRouteAndMatch = makeFindRouteAndMatch(props.routes);
 
   const setCurrentRoute = (route, match) => {
+    console.log('setCurrentRoute', { route, match });
     if (currentRoute.OnLeave) {
-      dispatch(currentRoute.OnLeave(currentRoute.params));
+      dispatch(currentRoute.OnLeave, currentRoute.params);
     }
 
     if (props.RouteAction) {
-      dispatch(props.RouteAction({
+      dispatch(props.RouteAction, {
         params: match.params,
         path: match.path,
-      }));
+      });
     }
 
     currentRoute = {
@@ -36,7 +37,7 @@ const PushFX = (dispatch, props) => {
     };
 
     if (currentRoute.OnEnter) {
-      dispatch(currentRoute.OnEnter(currentRoute.params));
+      dispatch(currentRoute.OnEnter, currentRoute.params);
     }
   };
 
