@@ -22,7 +22,7 @@ import withRouter, { effects } from '@mrbarrysoftware/hyperapp-router';
 
 const RouteAction = (state, { href }) => [
   state,
-  effects.NavigateByURI({ href }), // where href is a string, like `/route/path/here`
+  effects.Navigate({ href }), // where href is a string, like `/route/path/here`
 ];
 
 withRouter(app)({

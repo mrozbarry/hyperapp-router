@@ -1,9 +1,9 @@
-import { navigateByURI } from './lib/navigateByURI';
+import { navigate } from './lib/navigate';
 
-const NavigateByURIFX = (_dispatch, href) => {
-  navigateByURI(href);
+const NavigateFX = (_dispatch, href) => {
+  navigate(href);
 };
-export const NavigateByURI = props => [
-  NavigateByURIFX,
+export const Navigate = props => [
+  NavigateFX,
   props,
 ];

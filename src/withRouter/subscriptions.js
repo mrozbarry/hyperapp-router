@@ -1,5 +1,5 @@
 import * as constants from './const';
-import { navigateByURI } from './lib/navigateByURI';
+import { navigate } from './lib/navigate';
 
 const makeFindRouteAndMatch = (routes) => (href) => {
   let route;
@@ -96,7 +96,7 @@ const AnchorFX = (_dispatch, props) => {
     if (!findRouteAndMatch(href)) return null;
 
     event.preventDefault();
-    return navigateByURI(href, { type: 'push' });
+    return navigate(href, { type: 'push' });
   };
   document.addEventListener('click', onClick);
 
