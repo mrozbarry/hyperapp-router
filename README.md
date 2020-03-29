@@ -27,6 +27,12 @@ const GoToHref = (state, { href }) => [
 
 withRouter(app)({
   router: {
+    // Optional base url for the app.
+    // Use this if your app runs from anywhere that
+    // isn't at the root of the server.
+    // Defaults to '/'
+    baseUrl: '/foo',
+
     // Optional action ran every push/pop state
     // Useful when you just need navigation to
     // set something in state
