@@ -2,10 +2,21 @@ import { match } from 'path-to-regexp';
 
 import * as subscriptions from './subscriptions';
 
-const routesToArray = (routesObject) => Object.keys(routesObject)
-  .reduce((routes, path) => {
+const ensureStartsWithSlash = part => (
+  `/${part.replace(/^\//, '').replace(/\/+$/, '')}`
+);
+
+const routesToArray = ({ routes: routesObject, baseUrl }) => Object.keys(routesObject)
+  .reduce((routes, initialPath) => {
+    const path = ensureStartsWithSlash([
+      (baseUrl || '/').replace(/.+(\/$)/, ''),
+      initialPath.replace(/^\//, ''),
+    ]
+      .map(ensureStartsWithSlash)
+      .join(''));
+
     const route = {
-      ...routesObject[path],
+      ...routesObject[initialPath],
       path,
       match: match(path),
     }
@@ -21,7 +32,7 @@ export default (app) => ({ router, ...rest }) => {
     ? rest.subscriptions
     : () => [];
 
-  const routes = routesToArray(router.routes);
+  const routes = routesToArray(router);
 
   return app({
     ...rest,
