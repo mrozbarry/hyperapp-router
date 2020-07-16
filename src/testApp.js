@@ -1,6 +1,6 @@
 import withRouter from './index.js';
 
-const { app, h } = window.hyperapp;
+const { app, h, text } = window.hyperapp;
 
 const ApiFX = (dispatch, { collection, id, Ok, Err }) => {
   fetch(`https://dummy-json-bf230.firebaseio.com/${collection}/${id}.json`)
@@ -24,13 +24,13 @@ const viewTodo = id => state => {
   const todo = state.todos[id];
 
   if (!todo) {
-    return h('div', null, `Loading todo#${id}...`);
+    return h('div', {}, text(`Loading todo#${id}...`));
   }
 
-  return h('div', null, [
+  return h('div', {}, [
     h('label', { style: { display: 'block' } }, [
       h('input', { type: 'checkbox', checked: todo.completed, disabled: true }),
-      todo.task,
+      text(todo.task),
     ]),
   ]);
 };
@@ -41,7 +41,7 @@ withRouter(app)({
       '/': {
         OnEnter: state => ({
           ...state,
-          viewFn: () => h('div', null, 'Root'),
+          viewFn: () => h('div', {}, text('Root')),
         }),
       },
       '/todos/:id': {
@@ -61,8 +61,8 @@ withRouter(app)({
       '/(.*)': {
         OnEnter: (state) => ({
           ...state,
-            viewFn: () => h('div', null, [
-              h('h1', null, '404: Page not found'),
+            viewFn: () => h('div', {}, [
+              h('h1', {}, text('404: Page not found')),
             ]),
         }),
       },
@@ -73,16 +73,16 @@ withRouter(app)({
     todos: {},
     users: {},
     error: null,
-    viewFn: () => h('div', null, 'Loading router...'),
+    viewFn: () => h('div', {}, text('Loading router...')),
   },
 
   view: state => {
-    return h('div', null, [
-      h('a', { href: '/' }, 'Back to root'),
-      h('ol', null, Array.from({ length: 4 }, () => null).map((_, num) => (
-        h('li', null, h('a', { href: `/todos/${num}` }, `Todo ${num}`))
+    return h('div', {}, [
+      h('a', { href: '/' }, text('Back to root')),
+      h('ol', {}, Array.from({ length: 4 }, (_, num) => (
+        h('li', {}, h('a', { href: `/todos/${num}` }, text(`Todo ${num}`)))
       ))),
-      state.error ? state.error.toString() : state.viewFn(state),
+      state.error ? text(state.error.toString()) : state.viewFn(state),
     ]);
   },
 

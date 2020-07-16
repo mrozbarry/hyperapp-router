@@ -17,7 +17,7 @@ yarn add @mrbarrysoftware/hyperapp-router
 ## Usage
 
 ```js
-import { app, h } from 'hyperapp';
+import { app, h, text } from 'hyperapp';
 import withRouter, { effects } from '@mrbarrysoftware/hyperapp-router';
 
 const GoToHref = (state, { href }) => [
@@ -68,7 +68,7 @@ withRouter(app)({
   init: {},
 
   view: state => {
-    return h('div', null, 'Your app here...');
+    return h('div', null, text('Your app here...'));
   },
 
   node: document.querySelector('#app'),

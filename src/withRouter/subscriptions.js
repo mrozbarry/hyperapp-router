@@ -19,7 +19,6 @@ const PushFX = (dispatch, props) => {
   const findRouteAndMatch = makeFindRouteAndMatch(props.routes);
 
   const setCurrentRoute = (route, match) => {
-    console.log('setCurrentRoute', { route, match });
     if (currentRoute.OnLeave) {
       dispatch(currentRoute.OnLeave, currentRoute.params);
     }
