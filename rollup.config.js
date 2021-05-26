@@ -1,13 +1,15 @@
-import { eslint } from 'rollup-plugin-eslint';
-import minify from 'rollup-plugin-babel-minify';
+import eslint from '@rollup/plugin-eslint';
+import { terser } from 'rollup-plugin-terser';
 import strip from '@rollup/plugin-strip';
 import cleanup from 'rollup-plugin-cleanup';
+import { nodeResolve } from '@rollup/plugin-node-resolve';
 
 export default {
-  input: './src/index.js',
+  input: './src/withRouter/index.js',
   plugins: [
+    nodeResolve(),
     eslint(),
-    minify(),
+    terser(),
     strip(),
     cleanup(),
   ],

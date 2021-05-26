@@ -1,6 +1,5 @@
-import withRouter from './index.js';
-
-const { app, h, text } = window.hyperapp;
+import withRouter from './withRouter/index.js';
+import { app, h, text } from 'hyperapp';
 
 const ApiFX = (dispatch, { collection, id, Ok, Err }) => {
   fetch(`https://dummy-json-bf230.firebaseio.com/${collection}/${id}.json`)
