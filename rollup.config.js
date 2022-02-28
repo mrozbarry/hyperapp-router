@@ -1,5 +1,5 @@
 import { eslint } from 'rollup-plugin-eslint';
-import minify from 'rollup-plugin-babel-minify';
+import { terser } from 'rollup-plugin-terser';
 import strip from '@rollup/plugin-strip';
 import cleanup from 'rollup-plugin-cleanup';
 
@@ -7,7 +7,9 @@ export default {
   input: './src/index.js',
   plugins: [
     eslint(),
-    minify(),
+    terser({
+      module: true,
+    }),
     strip(),
     cleanup(),
   ],

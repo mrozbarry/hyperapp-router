@@ -1,90 +1,115 @@
-import withRouter from './index.js';
+import { app, h, text } from 'hyperapp';
+import * as hR from './library/index.js';
 
-const { app, h, text } = window.hyperapp;
-
-const ApiFX = (dispatch, { collection, id, Ok, Err }) => {
-  fetch(`https://dummy-json-bf230.firebaseio.com/${collection}/${id}.json`)
-    .then(r => r.json())
-    .then(data => dispatch(Ok, data))
-    .catch(err => dispatch(Err, err));
-};
-const Api = props => [ApiFX, props];
-
-const SetTodo = (state, data) => ({
+const Increment = (state) => ({ ...state, clicks: state.clicks + 1 });
+const UpdateRouter = (state, { currentPath }) => ({
   ...state,
-  todos: {
-    ...state.todos,
-    [data.id]: data
-  },
-  error: null,
+  router: hR.updateCurrentPath(currentPath, state.router),
 });
-const SetError = (state, error) => ({ ...state, error });
 
-const viewTodo = id => state => {
-  const todo = state.todos[id];
+const router = hR.create(
+  {
+    '/': hR.route({
+      before: [],
+      ready: [],
+      after: [],
+    }),
 
-  if (!todo) {
-    return h('div', {}, text(`Loading todo#${id}...`));
-  }
+    '/foo': hR.route({
+      before: [],
+      ready: [],
+      after: [],
+    }),
 
-  return h('div', {}, [
-    h('label', { style: { display: 'block' } }, [
-      h('input', { type: 'checkbox', checked: todo.completed, disabled: true }),
-      text(todo.task),
-    ]),
-  ]);
-};
+    '/baz': hR.route({
+      before: [],
+      ready: [],
+      after: [],
+    }),
+  },
+  '/',
+);
 
-withRouter(app)({
-  router: {
-    routes: {
-      '/': {
-        OnEnter: state => ({
-          ...state,
-          viewFn: () => h('div', {}, text('Root')),
-        }),
-      },
-      '/todos/:id': {
-        OnEnter: (state, params) => [
-          {
-            ...state,
-            viewFn: viewTodo(params.id),
-          },
-          Api({
-            collection: 'todos',
-            id: params.id,
-            Ok: SetTodo,
-            Err: SetError,
-          }),
-        ],
-      },
-      '/(.*)': {
-        OnEnter: (state) => ({
-          ...state,
-            viewFn: () => h('div', {}, [
-              h('h1', {}, text('404: Page not found')),
-            ]),
-        }),
+app({
+  init: [
+    {
+      router,
+      clicks: 0,
+    },
+    router.initEffect(window.location.pathname),
+  ],
+
+  view: (state) => h(
+    'main',
+    {
+      style: {
+        display: 'grid',
+        gridTemplateColumns: '2fr 1fr',
+        gap: '1rem',
       },
     },
-  },
+    [
+      h('article', {}, [
+        h('nav', {}, [
+          h('a', { href: '/', 'x-routable': 'true' }, text('Home')),
+          text(' | '),
+          h('a', { href: '/foo', 'x-routable': 'true' }, text('Foo')),
+          text(' | '),
+          h('a', { href: '/baz', 'x-routable': 'true' }, text(`Baz (${state.clicks})`)),
+          text(' | '),
+          h('a', { href: '/does-not-exist', 'x-routable': 'true' }, text('Should 404')),
+          text(' | '),
+          h('a', { href: '/will-reload-not-exists' }, text('Should reload & 404')),
+          text(' | '),
+          h('a', { href: 'https://mrbarry.com/' }, text('External Link')),
+        ]),
+        hR.view(
+          {
+            '/': h('section', {}, [
+              h('h1', {}, text('Default Route')),
+              h('p', {}, text('Here is the default route. Pretty fancy, if I do say so myself!')),
+            ]),
+            '/foo': h('section', {}, [
+              h('h1', {}, text('Foo Route')),
+              h('p', {}, text('Here is the foo route. Not much special about this one')),
+            ]),
+            '/baz': h('section', {}, [
+              h('h1', {}, text('Bar Route')),
+              h('button', { type: 'button', onclick: Increment }, text(`Button clicked ${state.clicks} times`)),
+            ]),
+          },
+          h('section', {
+            style: {
+              paddingTop: '40vh',
+              textAlign: 'center',
+            },
+          }, [
+            h('p', {}, [
+              text('Route '),
+              h('strong', {}, text(state.router.state.currentPath)),
+              text(' not found'),
+            ]),
+          ]),
+          state.router,
+        ),
+      ]),
 
-  init: {
-    todos: {},
-    users: {},
-    error: null,
-    viewFn: () => h('div', {}, text('Loading router...')),
-  },
+      h('aside', {}, [
+        h('p', {}, text('And this is what the app state looks like:')),
+        h('pre', {}, h('code', {}, text(JSON.stringify(state, null, 2)))),
+      ]),
+    ]
+  ),
 
-  view: state => {
-    return h('div', {}, [
-      h('a', { href: '/' }, text('Back to root')),
-      h('ol', {}, Array.from({ length: 4 }, (_, num) => (
-        h('li', {}, h('a', { href: `/todos/${num}` }, text(`Todo ${num}`)))
-      ))),
-      state.error ? text(state.error.toString()) : state.viewFn(state),
-    ]);
-  },
+  subscriptions: (state) => [
+    hR.subscriptions.HistoryController({ bus: state.router.bus, UpdateRouter }),
+    // hR.subscriptions.hashController({ router: state.router, routerKey: 'router' }),
+    hR.subscriptions.HookOnAnchorClick({
+      state: state.router.state,
+      navigate: state.router.navigate,
+      anchorMatcher: 'a[href][x-routable]',
+    }),
+  ],
 
   node: document.querySelector('#app'),
 });
